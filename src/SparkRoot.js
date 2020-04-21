@@ -41,8 +41,9 @@ export default function SparkRoot() {
                     const providedProfile = await fetch(`https://bytebin.lucko.me/${hash.substring(1)}`)
                     if (providedProfile.ok) {
                         if (providedProfile.headers.get('content-type') === 'application/x-spark-sampler') {
+                            const profileData = await providedProfile.arrayBuffer()
                             setStatus(PARSING_PROFILE_DATA)
-                            const data = new Pbf(new Uint8Array(await providedProfile.arrayBuffer()))
+                            const data = new Pbf(new Uint8Array(profileData))
                             const deserialized = SamplerData.read(data)
                             setLoaded(deserialized)
                             setStatus(LOADED_PROFILE_DATA)
