@@ -1,0 +1,286 @@
+/* GLOBAL */
+
+html {
+    background-color: var(--theme-background-color);
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 10pt;
+    line-height: 150%;
+    margin: 0;
+    padding: 54px 20px 20px 20px;
+    color: var(--theme-body-color);
+}
+
+a:link, a:visited {
+    color: var(--theme-link-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+a:hover, a:active {
+    color: var(--theme-hover-color);
+    border-color: var(--theme-hover-border-color);
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 14pt;
+    margin: 0;
+    font-weight: normal;
+    vertical-align: middle;
+    display: unset;
+}
+
+
+
+/* HEADER & FOOTER */
+
+#header {
+    display: block;
+    background: var(--theme-h1-bgcolor);
+    color: var(--theme-h1-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 20px;
+    margin: 0;
+    font-weight: normal;
+    box-shadow: 0 0 4px var(--theme-h1-box-shadow);
+    z-index: 20;
+    line-height: 100%;
+    min-width: 500px;
+}
+
+#header > .section {
+    vertical-align: 70%;
+    padding: 0 3px 0 3px;
+    display: inline-block;
+}
+
+#header img {
+    filter: var(--theme-img-filter);
+}
+
+#footer {
+    /*background: var(--theme-footer-bgcolor);*/
+    color: var(--theme-footer-color);
+    margin: 100px 0 0 0;
+    font-size: 10pt;
+    font-weight: normal;
+    text-align: right;
+}
+
+
+/* FUNDAMENTAL STYLES */
+#stack {
+  height: 80vh;
+  overflow: hidden;
+}
+
+
+
+/* STACK VIEW */
+
+#stack .node {
+    display: flex;
+}
+
+#stack .name {
+    color: var(--theme-name-color);
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA10lEQVR4Xt2Tu8rCQBSEzzlJmYBvYJ7EShArfQ1BrPNDyoB5DRHsrUQQQc3lcfxBiKbIHjfiCuayKSwEB6ZYPpjdGVhkZvhEJP3dALMMgmB+FoI7ddUQEYhw7bp/48YAkYtOfzCEJu22m5G2gnjeHIYxxHGiXJwV11dQTzdN4w0QKa4JULplGcymkwo4Rkn7iCjNOcNiuVK3vQZ0ug5gWwAgPnpalgW1+yDqA4hQmmSADVVGBW8bES7RaW+zYOBSNSSENL0etAGe5/UkMKBZ/77vv8APfKY7cvZVTt7VqzwAAAAASUVORK5CYII=) center left no-repeat;
+    padding-left: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#stack .node:hover {
+    background-color: var(--theme-name-hover-bgcolor);
+}
+
+#stack .name.bookmarked {
+    box-shadow: inset 0 0 0 100vmax rgba(134, 0, 0, 0.5);
+}
+
+#stack .package-part {
+    color: var(--theme-name-unimportant-color);
+}
+
+#stack .lambdadesc-part {
+    color: var(--theme-name-unimportant-color);
+}
+
+#stack .lineNumber {
+    color: var(--theme-linenumber-color);
+    padding-left: 2px;
+}
+
+#stack .remapped {
+    background: var(--theme-name-remapped-color);
+    border-radius: 3px;
+    padding: 0 4px;
+}
+
+#stack .percent {
+    color: var(--theme-percent-color);
+    font-size: 90%;
+    border-radius: 3px;
+    padding: 0 4px;
+}
+
+#stack .bar {
+    align-self: flex-end;
+    width: 100px;
+    height: 15px;
+    border: 1px solid var(--theme-bar-border-color);
+    position: absolute;
+    right: 30px;
+    background: var(--theme-bar-bgcolor);
+}
+
+#stack .bar-inner {
+    display: inline-block;
+    height: 15px;
+    background: var(--theme-bar-inner-bgcolor);
+}
+
+#stack .time {
+    display: none;
+    margin: 0;
+    color: var(--theme-time-color);
+    font-size: 90%;
+    border-radius: 3px;
+    padding: 0 4px;
+}
+
+#stack .name.hovered .time {
+    display: inline;
+}
+
+#stack .collapsed > .name {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA7ElEQVR4Xt1TzYrCQAxOYo8z0GeRZY+eBPGkryGIZ4UeC/Yx/EHvnqTssot/9XF2YUHXQyd2RtuC2OnBg2AgJF/CfJkvwyAzwyNGiT+XwLktBMHwRyl270lDRCDCRb8/aBcSqFi59UYTiuwzXLasEtR18nYbQRTt4f2tqqPGad8uIb2641TyKUSJp307gbH/0wl63U4Ks3y925e/AibOMcN4OofRZKZLOmps6lj2CoBodAohspKUMtePaCcgQqNZCGlw+PFt8nwXWLZE+NttviQrBr6RhoRwOBxXVgLP82pJqECx/fq+n4EX+ExnBI9csQQ1hIoAAAAASUVORK5CYII=);
+}
+
+#overlay span {
+    position: absolute;
+    color: var(--theme-overlay-span-color);
+    font-size: 90%;
+    z-index: 10;
+    line-height: 150%;
+    left: 20px;
+    width: 50px;
+    text-align: right;
+}
+
+#overlay span.bookmarked {
+    color: #da0b00;
+}
+
+
+
+/* HEAP VIEW */
+
+#heap-content {
+    font-size: 1.1em;
+}
+
+#heap-content td:nth-child(1),
+#heap-content td:nth-child(2),
+#heap-content td:nth-child(3) {
+    white-space: nowrap;
+}
+
+
+
+/* MISC (shared elements) */
+
+.dropdown {
+    float: right;
+    padding-right: 15px;
+}
+
+.dropdown > select {
+    background-color: var(--theme-input-bgcolor);
+    border-color: var(--theme-input-border-color);
+    color: var(--theme-input-color);
+    border-radius: 3px;
+    padding: 3px;
+    margin-top: 5px;
+}
+
+.dropdown >select:focus {
+    outline: none;
+}
+
+#loading {
+    font-size: 130%;
+    color: var(--theme-loading-color);
+    background: var(--theme-loading-bgcolor);
+    border: 1px solid var(--theme-loading-border-color);
+    padding: 8px;
+    border-radius: 3px;
+}
+
+#description {
+    font-size: 130%;
+    color: var(--theme-loading-color);
+    background: var(--theme-loading-bgcolor);
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+#description img {
+    vertical-align: top;
+    padding-left: 5px;
+}
+
+.no-results {
+    font-size: 130%;
+    color: var(--theme-no-results-color);
+}
+
+.filter-input-box {
+    float: right;
+    width: 350px;
+    background-color: var(--theme-input-bgcolor);
+    border: 1px solid var(--theme-input-border-color);
+    color: var(--theme-input-color);
+    font-size: 14px;
+}
+
+
+
+/* CONTEXT MENU */
+
+.context-menu {
+    display: block;
+    max-width: 200px;
+    min-width: 200px;
+    background-color: var(--theme-context-menu-bgcolor);
+    position: absolute;
+    padding: 5px 0;
+    z-index: 999999999;
+    box-shadow: 0 2px 6px rgba(0,0,0,.5)
+}
+
+.context-menu ul {
+    list-style: none;
+    padding: 0 5px;
+    margin: 0;
+}
+
+.context-menu ul > li {
+    display: block;
+    padding: 3px;
+    list-style: none;
+    color: var(--theme-context-menu-color);
+    cursor: default;
+}
+
+.context-menu ul > li:hover {
+    background-color: var(--theme-context-menu-hover-bgcolor);
+}

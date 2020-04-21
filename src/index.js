@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import 'react-virtualized/styles.css';
+import './spark-base.css';
+import './themes/spark.css';
+import SparkRoot from './SparkRoot';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SparkRoot />
   </React.StrictMode>,
   document.getElementById('root')
 );
