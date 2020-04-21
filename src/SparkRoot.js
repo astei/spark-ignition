@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Pbf from 'pbf'
-import testProfile from './extreme.pbf'
 import { SamplerData } from './proto'
 import { Sampler } from './types/Sampler';
 
