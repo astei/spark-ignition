@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'react-virtualized/styles.css';
 import './spark-base.css';
 import './themes/spark.css';
 import SparkRoot from './SparkRoot';

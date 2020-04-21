@@ -1,83 +1,66 @@
-import React from 'react';
-import {FixedSizeTree as Tree} from 'react-vtree';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import React, {useState, useMemo, useEffect} from 'react';
 import {humanFriendlyPercentage} from '../util'
+import withHoverDetection from '../hoc/withHoverDetection'
+import classnames from 'classnames'
 
 export function Sampler({ data }) {
-    function* samplerWalker(refresh) {
-        function getName(node) {
-            if ('className' in node && 'methodName' in node) {
-                return node['className'] + "." + node['methodName'] + '()'
-            } else {
-                return node.name
-            }
-        }
+    const { threads } = data
+    return <div id="sampler">
+        <div id="stack">
+            {threads.map(thread => <BaseNode parents={[]} node={thread} key={thread.name} />)}
+        </div>
+    </div>
+}
 
-        // Push the initial data, specifically threads
-        const stack = data.threads.map(thread => ({
-            nestingLevel: 0,
-            node: {
-                ...thread,
-                threadTime: thread.time
-            }
-        }))
+const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHoverChanged, toggleExpand }) => {
+    useEffect(() => onHoverChanged(hovered), [onHoverChanged, hovered])
+    return <div onClick={toggleExpand}>
+        {children}
+        <span className="percent">{humanFriendlyPercentage(time / threadTime)}</span>
+        <span className="time">{time}ms</span>
+        <span className="bar">
+            <span className="bar-inner" style={{
+                width: humanFriendlyPercentage(time / threadTime)
+            }} />
+        </span>
+    </div>
+})
 
-        // Walk through the tree until we have no nodes available.
-        while (stack.length !== 0) {
-            const {
-                node,
-                nestingLevel,
-            } = stack.pop();
-            
-            const id = nestingLevel + '-' + getName(node)
-            const time = node.time
-            const threadTime = nestingLevel === 0 ? time : node.threadTime
+// We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
+const BaseNode = React.memo(({ parents, node }) => {
+    const [ expanded, setExpanded ] = useState(node.children.length <= 1)
+    const [ hovered, setHovered ] = useState(false)
+    const classNames = classnames({
+        'node': true,
+        'collapsed': !expanded,
+        'parent': parents.length === 0
+    })
+    const nodeInfoClassNames = 'name'
+    const basicName = node.name ? node.name : node.className + "." + node.methodName + "()"
+    const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node])
+    const parentTime = parents.length === 0 ? node.time : parents[0].time
 
-            const isOpened = yield refresh
-            ? {
-                id,
-                isLeaf: node.children.length === 0,
-                isOpenByDefault: nestingLevel > 0 && node.children.length === 1,
-                name: getName(node),
-                nestingLevel,
-                time,
-                threadTime,
-                parentTime: node.parentTime
-            }
-            : id;
+    function toggleExpand() {
+        setExpanded(!expanded)
+    }
     
-            if (node.children.length !== 0 && isOpened) {
-                for (let i = node.children.length - 1; i >= 0; i--) {
-                    stack.push({
-                        nestingLevel: nestingLevel + 1,
-                        node: {
-                            ...node.children[i],
-                            parentTime: time,
-                            threadTime: threadTime
-                        }
-                    });
-                }
-            }
+    function onHoverChanged(newHover) {
+        if (hovered !== newHover) {
+            setHovered(newHover)
         }
     }
 
-    return (
-        <div id="sampler">
-            <div id="stack">
-                <AutoSizer>
-                    {({height, width}) => {
-                        width -= 30
-                        return (
-                            <Tree treeWalker={samplerWalker} itemSize={24} height={height} width={width}>
-                                {Node}
-                            </Tree>
-                        )
-                    }}
-                </AutoSizer>
-            </div>
+    return <li className={classNames}>
+        <div className={nodeInfoClassNames}>
+            <NodeInfo time={node.time} threadTime={parentTime} toggleExpand={toggleExpand} onHoverChanged={onHoverChanged}>
+                {basicName}
+            </NodeInfo>
         </div>
-    );
-}
+        {expanded ? <ul className="children">
+            {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} key={i} />)}
+        </ul> : null}
+    </li>
+})
 
 const Name = ({ name }) => {
     const methodPackageSeparatorIdx = name.lastIndexOf('.')
@@ -113,29 +96,3 @@ const Name = ({ name }) => {
         <span className="method-part">{method}</span>
     </>
 }
-
-const Node = ({data: {isLeaf, name, nestingLevel, time, threadTime, parentTimes}, isOpen, style, toggle}) => {
-    let nodeClasses = "node hovered"
-    if (!isOpen) {
-        nodeClasses += " collapsed"
-    }
-
-    const adjustedStyle = {
-        ...style
-    }
-    return (
-        <div style={adjustedStyle}>
-            <div className={nodeClasses} onClick={toggle}>
-                <div className="name" style={{ marginLeft: (nestingLevel * 18) + 'px' }}>
-                    <Name name={name} />
-                    <span className="percent">
-                        {humanFriendlyPercentage(time / threadTime)}
-                    </span>
-                </div>
-                <span className="bar">
-                    <span className="bar-inner" style={{ width: humanFriendlyPercentage(time / threadTime) }} />
-                </span>
-            </div>
-        </div>
-    )
-};
