@@ -12,11 +12,6 @@ CommandSenderData._readField = function (tag, obj, pbf) {
     else if (tag === 2) obj.name = pbf.readString();
     else if (tag === 3) obj.uniqueId = pbf.readString();
 };
-CommandSenderData.write = function (obj, pbf) {
-    if (obj.type) pbf.writeVarintField(1, obj.type);
-    if (obj.name) pbf.writeStringField(2, obj.name);
-    if (obj.uniqueId) pbf.writeStringField(3, obj.uniqueId);
-};
 
 CommandSenderData.Type = {
     "OTHER": {
@@ -40,10 +35,6 @@ HeapData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.metadata = HeapMetadata.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 2) obj.entries.push(HeapEntry.read(pbf, pbf.readVarint() + pbf.pos));
 };
-HeapData.write = function (obj, pbf) {
-    if (obj.metadata) pbf.writeMessage(1, HeapMetadata.write, obj.metadata);
-    if (obj.entries) for (var i = 0; i < obj.entries.length; i++) pbf.writeMessage(2, HeapEntry.write, obj.entries[i]);
-};
 
 // HeapMetadata ========================================
 
@@ -54,9 +45,6 @@ HeapMetadata.read = function (pbf, end) {
 };
 HeapMetadata._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
-};
-HeapMetadata.write = function (obj, pbf) {
-    if (obj.user) pbf.writeMessage(1, CommandSenderData.write, obj.user);
 };
 
 // HeapEntry ========================================
@@ -72,12 +60,6 @@ HeapEntry._readField = function (tag, obj, pbf) {
     else if (tag === 3) obj.size = pbf.readVarint(true);
     else if (tag === 4) obj.type = pbf.readString();
 };
-HeapEntry.write = function (obj, pbf) {
-    if (obj.order) pbf.writeVarintField(1, obj.order);
-    if (obj.instances) pbf.writeVarintField(2, obj.instances);
-    if (obj.size) pbf.writeVarintField(3, obj.size);
-    if (obj.type) pbf.writeStringField(4, obj.type);
-};
 
 // SamplerData ========================================
 
@@ -89,10 +71,6 @@ SamplerData.read = function (pbf, end) {
 SamplerData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.metadata = SamplerMetadata.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 2) obj.threads.push(ThreadNode.read(pbf, pbf.readVarint() + pbf.pos));
-};
-SamplerData.write = function (obj, pbf) {
-    if (obj.metadata) pbf.writeMessage(1, SamplerMetadata.write, obj.metadata);
-    if (obj.threads) for (var i = 0; i < obj.threads.length; i++) pbf.writeMessage(2, ThreadNode.write, obj.threads[i]);
 };
 
 // SamplerMetadata ========================================
@@ -110,14 +88,6 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
     else if (tag === 5) obj.dataAggregator = SamplerMetadata.DataAggregator.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 6) obj.comment = pbf.readString();
 };
-SamplerMetadata.write = function (obj, pbf) {
-    if (obj.user) pbf.writeMessage(1, CommandSenderData.write, obj.user);
-    if (obj.startTime) pbf.writeVarintField(2, obj.startTime);
-    if (obj.interval) pbf.writeVarintField(3, obj.interval);
-    if (obj.threadDumper) pbf.writeMessage(4, SamplerMetadata.ThreadDumper.write, obj.threadDumper);
-    if (obj.dataAggregator) pbf.writeMessage(5, SamplerMetadata.DataAggregator.write, obj.dataAggregator);
-    if (obj.comment) pbf.writeStringField(6, obj.comment);
-};
 
 // SamplerMetadata.ThreadDumper ========================================
 
@@ -130,11 +100,6 @@ SamplerMetadata.ThreadDumper._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
     else if (tag === 2) pbf.readPackedVarint(obj.ids, true);
     else if (tag === 3) obj.patterns.push(pbf.readString());
-};
-SamplerMetadata.ThreadDumper.write = function (obj, pbf) {
-    if (obj.type) pbf.writeVarintField(1, obj.type);
-    if (obj.ids) pbf.writePackedVarint(2, obj.ids);
-    if (obj.patterns) for (var i = 0; i < obj.patterns.length; i++) pbf.writeStringField(3, obj.patterns[i]);
 };
 
 SamplerMetadata.ThreadDumper.Type = {
@@ -163,11 +128,6 @@ SamplerMetadata.DataAggregator._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
     else if (tag === 2) obj.threadGrouper = pbf.readVarint();
     else if (tag === 3) obj.tickLengthThreshold = pbf.readVarint(true);
-};
-SamplerMetadata.DataAggregator.write = function (obj, pbf) {
-    if (obj.type) pbf.writeVarintField(1, obj.type);
-    if (obj.threadGrouper) pbf.writeVarintField(2, obj.threadGrouper);
-    if (obj.tickLengthThreshold) pbf.writeVarintField(3, obj.tickLengthThreshold);
 };
 
 SamplerMetadata.DataAggregator.Type = {
@@ -212,15 +172,6 @@ StackTraceNode._readField = function (tag, obj, pbf) {
     else if (tag === 6) obj.lineNumber = pbf.readVarint(true);
     else if (tag === 7) obj.methodDesc = pbf.readString();
 };
-StackTraceNode.write = function (obj, pbf) {
-    if (obj.time) pbf.writeDoubleField(1, obj.time);
-    if (obj.children) for (var i = 0; i < obj.children.length; i++) pbf.writeMessage(2, StackTraceNode.write, obj.children[i]);
-    if (obj.className) pbf.writeStringField(3, obj.className);
-    if (obj.methodName) pbf.writeStringField(4, obj.methodName);
-    if (obj.parentLineNumber) pbf.writeVarintField(5, obj.parentLineNumber);
-    if (obj.lineNumber) pbf.writeVarintField(6, obj.lineNumber);
-    if (obj.methodDesc) pbf.writeStringField(7, obj.methodDesc);
-};
 
 // ThreadNode ========================================
 
@@ -233,9 +184,4 @@ ThreadNode._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.name = pbf.readString();
     else if (tag === 2) obj.time = pbf.readDouble();
     else if (tag === 3) obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
-};
-ThreadNode.write = function (obj, pbf) {
-    if (obj.name) pbf.writeStringField(1, obj.name);
-    if (obj.time) pbf.writeDoubleField(2, obj.time);
-    if (obj.children) for (var i = 0; i < obj.children.length; i++) pbf.writeMessage(3, StackTraceNode.write, obj.children[i]);
 };
