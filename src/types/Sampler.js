@@ -2,10 +2,14 @@ import React, {useState, useMemo, useEffect} from 'react';
 import {humanFriendlyPercentage} from '../util'
 import withHoverDetection from '../hoc/withHoverDetection'
 import classnames from 'classnames'
+import {CommandSenderData, PlatformData} from '../proto';
 
 export function Sampler({ data }) {
-    const { threads } = data
+    const { metadata, threads } = data
     return <div id="sampler">
+        {!!metadata &&
+            <Metadata metadata={metadata} />
+        }
         <div id="stack">
             {threads.map(thread => <BaseNode parents={[]} node={thread} key={thread.name} />)}
         </div>
@@ -95,4 +99,54 @@ const Name = ({ name }) => {
         .
         <span className="method-part">{method}</span>
     </>
+}
+
+const Metadata = ({ metadata }) => {
+    let commonData = <CommonMetadata metadata={metadata} />
+    let platformData = <PlatformMetadata metadata={metadata} />
+
+    return <div id="metadata">
+        {commonData}
+        {commonData && platformData && <br />}
+        {platformData}
+    </div>
+}
+
+const CommonMetadata = ({ metadata }) => {
+    if (metadata.user && metadata.startTime && metadata.interval) {
+        const { user, startTime, interval } = metadata
+
+        let comment = ''
+        if (metadata.comment) {
+            comment = '"' + metadata.comment + '"'
+        }
+
+        const { type, name } = user
+        const start = new Date(startTime);
+
+        let avatarUrl = 'https://minotar.net/avatar/Console/12.png'
+        if (type == CommandSenderData.Type.PLAYER.value) {
+            const uuid = user.uniqueId.replace(/\-/g, "")
+            avatarUrl = 'https://minotar.net/avatar/' + uuid + '/12.png'
+        }
+
+        return <>
+            <span>
+                Profile {comment} created by <img src={avatarUrl} alt="" /> {name} at {start.toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'})} on {start.toLocaleDateString()}, interval {interval / 1000}ms
+            </span>
+        </>
+    }
+}
+
+const PlatformMetadata = ({ metadata }) => {
+    if (metadata.platform) {
+        const { platform } = metadata
+        const platformType = Object.keys(PlatformData.Type)[platform.type].toLowerCase()
+
+        return <>
+            <span id="platform-data">
+                {platform.name} version "{platform.version}" ({platformType})
+            </span>
+        </>
+    }
 }
