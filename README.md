@@ -1,23 +1,5 @@
 # spark-ignition
 
-spark-ignition is the under-development replacement UI for [spark](https://spark.lucko.me). It is built on top of
-[React](https://reactjs.org). The focus of spark-ignition is improved performance compared to the existing UI, along
-with new features.
+## DEPRECATED
 
-## Features currently implemented
-
-- [ ] Load data
-  - [x] Sampler
-  - [ ] Heap summary
-- [ ] Themes
-- [ ] Sampler reports
-  - [x] Stack traces and time usage
-  - [ ] Basic information about the dump
-  - [ ] Usage percentage of parent elements
-  - [ ] Deobfuscation mappings
-  - [ ] Filtering
-- [ ] Heap summary
-
-## License
-
-This code is licensed under the GPLv3, as `spark` itself is.
+`spark-ignition` formed the basis for the total rewrite of `spark-viewer` which has been deployed live as of December 13, 2020, brining greater responsiveness to spark users. Thanks to @lucko for picking up where I left off. This repository has been archived.
